@@ -104,8 +104,15 @@ const Objects = () => {
         y: (latitude - bounds.lat.min) / (bounds.lat.max - bounds.lat.min),
       };
 
+      console.log(
+        latitude,
+        bounds.lat.min,
+        bounds.lat.max,
+        (latitude - bounds.lat.min) / (bounds.lat.max - bounds.lat.min)
+      );
+
       const newPosX = -1 * (worldSize.w / 2) + worldSize.w * posNorm.x;
-      const newPosZ = (-1 * worldSize.h) / 2 + worldSize.h * posNorm.y * -1;
+      const newPosZ = (-1 * worldSize.h) / 2 + -1 * worldSize.h * posNorm.y;
 
       const destination = destinationRef.current;
       destination.set(newPosX, 1, newPosZ);
@@ -271,7 +278,7 @@ const Objects = () => {
           </div>
 
           <div style={{ whiteSpace: "pre-line", fontSize: "10px" }}>
-            {/*status*/}
+            {status}
           </div>
           <div>Moving as {myPresence.character}</div>
           <div>

@@ -346,7 +346,7 @@ export const ThreeScene = () => {
           textIndent: "-100em",
           overflow: "hidden",
           position: "absolute",
-          left: `${window.innerWidth * (1 - (mouseX + 0.5))}px`,
+          left: `${window ? window.innerWidth * (1 - (mouseX + 0.5)) : 0}px`,
           top: "50%",
         }}
       >

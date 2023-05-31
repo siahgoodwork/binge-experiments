@@ -1,13 +1,9 @@
-import { ThreeScene } from "./threejs";
+"use client";
 
 export default function Home() {
   return (
     <main>
-      <div id="three-root">
-        <ThreeScene />
-      </div>
+      <div id="three-root"></div>
     </main>
   );
 }
-
-export const metadata = { title: "lloll" };

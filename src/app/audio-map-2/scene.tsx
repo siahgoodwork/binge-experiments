@@ -255,12 +255,13 @@ const Objects = () => {
                 initiateAudio({
                   player: playerRef.current,
                   audioSources: [
-                    {
-                      object: audioObj1Ref.current,
-                      audio: "/clock-ticking-2.mp3",
-                    },
-                    { object: audioObj2Ref.current, audio: "/joel.m4a" },
-                    { object: audioObj3Ref.current, audio: "/oli.m4a" },
+                    //{ object: audioObj1Ref.current, audio: "/joel.m4a" },
+                    //{ object: audioObj2Ref.current, audio: "/joel.m4a" },
+                    //{ object: audioObj3Ref.current, audio: "/oli.m4a" },
+                    { object: audioCharOliRef.current, audio: "/park-1.mp3" },
+                    { object: audioCharJoelRef.current, audio: "/park-2.mp3" },
+                    { object: audioCharSiahRef.current, audio: "/park-3.mp3" },
+                    { object: audioCharRalphRef.current, audio: "/park-4.mp3" },
                   ],
                 });
               }}

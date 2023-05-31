@@ -2,7 +2,7 @@
 
 import { Html, OrthographicCamera } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { forwardRef, Ref, useRef } from "react";
+import { forwardRef, Ref, useCallback, useRef, useState } from "react";
 import * as THREE from "three";
 
 const Scene = () => {
@@ -51,6 +51,39 @@ const Objects = () => {
   const audioObj1Ref = useRef<THREE.Mesh>(null!);
   const audioObj2Ref = useRef<THREE.Mesh>(null!);
   const audioObj3Ref = useRef<THREE.Mesh>(null!);
+
+  const [status, setStatus] = useState("");
+  const success: PositionCallback = useCallback(
+    (position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const heading = position.coords.heading;
+      setStatus(`lat: ${latitude}\nlon: ${longitude}\nhead: ${heading}`);
+
+      const bounds = {
+        lat: { max: -41.291137, min: -41.294317 },
+        lon: { min: 174.778861, max: 174.784639 },
+      };
+
+      const posNorm = {
+        x: (longitude - bounds.lon.min) / (bounds.lon.max - bounds.lon.min),
+        y: (latitude - bounds.lat.min) / (bounds.lat.max - bounds.lat.min),
+      };
+
+      const newPosX = -1 * (worldSize.w / 2) + worldSize.w * posNorm.x;
+      const newPosZ = (-1 * worldSize.h) / 2 + worldSize.h * posNorm.y * -1;
+
+      const destination = destinationRef.current;
+      destination.set(newPosX, 1, newPosZ);
+    },
+    [setStatus]
+  );
+
+  const error = () => {};
+
+  const triggerGeo = () => {
+    navigator.geolocation.watchPosition(success, error);
+  };
 
   useFrame(() => {
     if (cam.current) {
@@ -149,6 +182,16 @@ const Objects = () => {
           >
             start
           </button>
+          <br />
+          <button
+            onClick={() => {
+              triggerGeo();
+            }}
+          >
+            Geolocate
+          </button>
+          <br />
+          <div style={{ whiteSpace: "pre-line" }}>{status}</div>
         </div>
       </Html>
     </group>

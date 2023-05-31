@@ -1,9 +1,6 @@
 "use client";
 
-import { PerspectiveCamera, useGLTF } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useState, Suspense, useRef, useEffect, useCallback } from "react";
-import { Mesh } from "three";
+import { useState, useRef, useEffect } from "react";
 import * as faceapi from "face-api.js";
 
 const videoWidth = 300;

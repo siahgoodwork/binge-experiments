@@ -134,6 +134,7 @@ const Objects = () => {
   const triggerGeo = () => {
     navigator.geolocation.watchPosition(success, error, {
       enableHighAccuracy: true,
+      maximumAge: 2,
     });
   };
 

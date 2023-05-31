@@ -33,17 +33,20 @@ const initiateAudio = ({
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(src.audio, function (buffer) {
       sound.setBuffer(buffer);
-      sound.setRefDistance(0.5);
-      sound.setMaxDistance(1);
+      sound.setRefDistance(1);
+      sound.setMaxDistance(20);
+      sound.setDistanceModel("linear");
       sound.loop = true;
       sound.play();
+      sound.playbackRate = 1 + 0.2 * (Math.random() - 0.5);
+
       src.object.add(sound);
     });
   });
 };
 
 const Objects = () => {
-  const worldSize = { w: 24, h: 24 };
+  const worldSize = { w: 24, h: 16 };
   const cam = useRef<THREE.OrthographicCamera>();
   const playerRef = useRef<THREE.Group>(null!);
   const destinationRef = useRef(new THREE.Vector3(4, 1, 0));
@@ -51,6 +54,8 @@ const Objects = () => {
   const audioObj1Ref = useRef<THREE.Mesh>(null!);
   const audioObj2Ref = useRef<THREE.Mesh>(null!);
   const audioObj3Ref = useRef<THREE.Mesh>(null!);
+  const audioObj4Ref = useRef<THREE.Mesh>(null!);
+  const audioObj5Ref = useRef<THREE.Mesh>(null!);
 
   const [status, setStatus] = useState("");
   const success: PositionCallback = useCallback(
@@ -85,10 +90,13 @@ const Objects = () => {
     navigator.geolocation.watchPosition(success, error);
   };
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
     if (cam.current) {
       cam.current.lookAt(0, 0, 0);
     }
+
+    // audioObj1Ref.current.position.x = worldSize.w * Math.sin(t / 8) * 0.5;
 
     if (playerRef) {
       if (playerRef.current) {
@@ -107,7 +115,7 @@ const Objects = () => {
             destination,
             -1
           );
-          player.lookAt(lookAtPos);
+          player.lookAt(100, 0, 0);
         }
       }
     }
@@ -119,12 +127,12 @@ const Objects = () => {
         makeDefault
         ref={cam}
         position={[-2, 8, 10]}
-        zoom={10}
+        zoom={30}
       />
       <group>
         <group position={[0, 1, 0]} ref={playerRef}>
           <mesh>
-            <sphereGeometry args={[0.85, 24, 24]} />
+            <sphereGeometry />
             <meshBasicMaterial color="#00aa35" />
           </mesh>
 
@@ -155,6 +163,8 @@ const Objects = () => {
         <AudioSrc ref={audioObj1Ref} position={[6, 1, 3]} />
         <AudioSrc ref={audioObj2Ref} position={[8, 1, -3]} />
         <AudioSrc ref={audioObj3Ref} position={[-9, 1, 4]} />
+        <AudioSrc ref={audioObj4Ref} position={[-8, 1, 4]} />
+        <AudioSrc ref={audioObj5Ref} position={[-7, 1, 4]} />
       </group>
 
       <Html fullscreen>
@@ -172,10 +182,24 @@ const Objects = () => {
                 audioSources: [
                   {
                     object: audioObj1Ref.current,
+                    audio: "/energy.mp3",
+                  },
+                  {
+                    object: audioObj2Ref.current,
                     audio: "/clock-ticking-2.mp3",
                   },
-                  { object: audioObj2Ref.current, audio: "/joel.m4a" },
-                  { object: audioObj3Ref.current, audio: "/oli.m4a" },
+                  {
+                    object: audioObj3Ref.current,
+                    audio: "/clock-ticking-2.mp3",
+                  },
+                  {
+                    object: audioObj4Ref.current,
+                    audio: "/clock-ticking-2.mp3",
+                  },
+                  {
+                    object: audioObj5Ref.current,
+                    audio: "/clock-ticking-2.mp3",
+                  },
                 ],
               });
             }}

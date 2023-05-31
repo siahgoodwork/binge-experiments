@@ -2,7 +2,7 @@
 
 import { Html, OrthographicCamera } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { forwardRef, Ref, useCallback, useRef, useState } from "react";
+import { forwardRef, Ref, useRef } from "react";
 import * as THREE from "three";
 
 const Scene = () => {
@@ -33,8 +33,8 @@ const initiateAudio = ({
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(src.audio, function (buffer) {
       sound.setBuffer(buffer);
-      sound.setRefDistance(0.5);
-      sound.setMaxDistance(1);
+      sound.setRefDistance(1);
+      sound.setMaxDistance(6);
       sound.loop = true;
       sound.play();
       src.object.add(sound);
@@ -46,44 +46,12 @@ const Objects = () => {
   const worldSize = { w: 24, h: 24 };
   const cam = useRef<THREE.OrthographicCamera>();
   const playerRef = useRef<THREE.Group>(null!);
-  const destinationRef = useRef(new THREE.Vector3(4, 1, 0));
+  const destinationRef = useRef(new THREE.Vector3(12, 1, 12));
 
   const audioObj1Ref = useRef<THREE.Mesh>(null!);
   const audioObj2Ref = useRef<THREE.Mesh>(null!);
   const audioObj3Ref = useRef<THREE.Mesh>(null!);
-
-  const [status, setStatus] = useState("");
-  const success: PositionCallback = useCallback(
-    (position) => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      const heading = position.coords.heading;
-      setStatus(`lat: ${latitude}\nlon: ${longitude}\nhead: ${heading}`);
-
-      const bounds = {
-        lat: { max: -41.291137, min: -41.294317 },
-        lon: { min: 174.778861, max: 174.784639 },
-      };
-
-      const posNorm = {
-        x: (longitude - bounds.lon.min) / (bounds.lon.max - bounds.lon.min),
-        y: (latitude - bounds.lat.min) / (bounds.lat.max - bounds.lat.min),
-      };
-
-      const newPosX = -1 * (worldSize.w / 2) + worldSize.w * posNorm.x;
-      const newPosZ = (-1 * worldSize.h) / 2 + worldSize.h * posNorm.y * -1;
-
-      const destination = destinationRef.current;
-      destination.set(newPosX, 1, newPosZ);
-    },
-    [setStatus]
-  );
-
-  const error = () => {};
-
-  const triggerGeo = () => {
-    navigator.geolocation.watchPosition(success, error);
-  };
+  const audioObj4Ref = useRef<THREE.Mesh>(null!);
 
   useFrame(() => {
     if (cam.current) {
@@ -118,13 +86,14 @@ const Objects = () => {
       <OrthographicCamera
         makeDefault
         ref={cam}
-        position={[-2, 8, 10]}
-        zoom={10}
+        position={[14, 12, 14]}
+        zoom={20}
+        near={0.01}
       />
       <group>
-        <group position={[0, 1, 0]} ref={playerRef}>
+        <group position={[12, 1, 12]} ref={playerRef}>
           <mesh>
-            <sphereGeometry args={[0.85, 24, 24]} />
+            <sphereGeometry />
             <meshBasicMaterial color="#00aa35" />
           </mesh>
 
@@ -152,9 +121,10 @@ const Objects = () => {
           <meshBasicMaterial color="#ddd" />
         </mesh>
 
-        <AudioSrc ref={audioObj1Ref} position={[6, 1, 3]} />
-        <AudioSrc ref={audioObj2Ref} position={[8, 1, -3]} />
-        <AudioSrc ref={audioObj3Ref} position={[-9, 1, 4]} />
+        <AudioSrc ref={audioObj1Ref} position={[12, 1, 12]} />
+        <AudioSrc ref={audioObj2Ref} position={[-12, 1, 12]} />
+        <AudioSrc ref={audioObj3Ref} position={[-12, 1, -12]} />
+        <AudioSrc ref={audioObj4Ref} position={[12, 1, -12]} />
       </group>
 
       <Html fullscreen>
@@ -172,26 +142,27 @@ const Objects = () => {
                 audioSources: [
                   {
                     object: audioObj1Ref.current,
-                    audio: "/clock-ticking-2.mp3",
+                    audio: "/audio-map-1/ralph/ralph-1-1.m4a",
                   },
-                  { object: audioObj2Ref.current, audio: "/joel.m4a" },
-                  { object: audioObj3Ref.current, audio: "/oli.m4a" },
+
+                  {
+                    object: audioObj2Ref.current,
+                    audio: "/audio-map-1/ralph/ralph-1-2.m4a",
+                  },
+                  {
+                    object: audioObj3Ref.current,
+                    audio: "/audio-map-1/ralph/ralph-1-3.m4a",
+                  },
+                  {
+                    object: audioObj4Ref.current,
+                    audio: "/audio-map-1/ralph/ralph-1-4.m4a",
+                  },
                 ],
               });
             }}
           >
             start
           </button>
-          <br />
-          <button
-            onClick={() => {
-              triggerGeo();
-            }}
-          >
-            Geolocate
-          </button>
-          <br />
-          <div style={{ whiteSpace: "pre-line" }}>{status}</div>
         </div>
       </Html>
     </group>

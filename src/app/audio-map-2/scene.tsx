@@ -1,12 +1,15 @@
 "use client";
 
-import { Html, OrthographicCamera } from "@react-three/drei";
+import { Html, OrthographicCamera, useTexture } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { forwardRef, Ref, useCallback, useRef, useState } from "react";
 import * as THREE from "three";
 import {
+  useMutation,
   useMyPresence,
   useOthers,
+  useRoom,
+  useStorage,
   useUpdateMyPresence,
 } from "../liveblocks.config";
 
@@ -58,9 +61,29 @@ const Objects = () => {
   const audioObj2Ref = useRef<THREE.Mesh>(null!);
   const audioObj3Ref = useRef<THREE.Mesh>(null!);
 
-  const updateMyPresence = useUpdateMyPresence();
-  const [myPresence] = useMyPresence();
-  const others = useOthers();
+  const audioCharSiahRef = useRef<THREE.Mesh>(null!);
+  const audioCharRalphRef = useRef<THREE.Mesh>(null!);
+  const audioCharOliRef = useRef<THREE.Mesh>(null!);
+  const audioCharJoelRef = useRef<THREE.Mesh>(null!);
+
+  const [myPresence, updateMyPresence] = useMyPresence();
+  const liveCharPos = useStorage((root) => root);
+
+  const worldMap = useTexture("/map-park.jpg");
+
+  const setCharPos = useMutation(({ storage, self }) => {
+    if (!self.presence.character) {
+      console.log("select char");
+      return;
+    }
+
+    if (!self.presence.position) {
+      return;
+    }
+    storage
+      .get(self.presence.character as "joel" | "oli" | "siah" | "ralph")
+      .update(self.presence.position);
+  }, []);
 
   const [status, setStatus] = useState("");
 
@@ -72,8 +95,8 @@ const Objects = () => {
       setStatus(`lat: ${latitude}\nlon: ${longitude}\nhead: ${heading}`);
 
       const bounds = {
-        lat: { max: -41.291137, min: -41.294317 },
-        lon: { min: 174.778861, max: 174.784639 },
+        lat: { min: -41.292339, max: -41.2904 },
+        lon: { min: 174.783457, max: 174.786897 },
       };
 
       const posNorm = {
@@ -89,8 +112,14 @@ const Objects = () => {
       updateMyPresence({
         position: { x: newPosX, y: newPosZ },
       });
+
+      try {
+        setCharPos();
+      } catch (err) {
+        console.log(err);
+      }
     },
-    [setStatus, updateMyPresence]
+    [setStatus, updateMyPresence, setCharPos, worldSize.h, worldSize.w]
   );
 
   const error = () => {};
@@ -132,8 +161,8 @@ const Objects = () => {
       <OrthographicCamera
         makeDefault
         ref={cam}
-        position={[-2, 8, 10]}
-        zoom={10}
+        position={[0, 8, 7]}
+        zoom={15}
       />
       <group>
         <group position={[0, 1, 0]} ref={playerRef}>
@@ -163,16 +192,43 @@ const Objects = () => {
               updateMyPresence({
                 position: { x: worldXY.x, y: worldXY.y },
               });
+
+              try {
+                setCharPos();
+              } catch (err) {
+                console.log(err);
+              }
             }
           }}
         >
           <planeGeometry args={[worldSize.w, worldSize.h, 2, 2]} />
-          <meshBasicMaterial color="#ddd" />
+          <meshBasicMaterial map={worldMap} />
         </mesh>
 
         <AudioSrc ref={audioObj1Ref} position={[6, 1, 3]} />
         <AudioSrc ref={audioObj2Ref} position={[8, 1, -3]} />
         <AudioSrc ref={audioObj3Ref} position={[-9, 1, 4]} />
+
+        <AudioSrc
+          ref={audioCharSiahRef}
+          character="siah"
+          position={[liveCharPos.siah.x, 1, liveCharPos.siah.y]}
+        />
+        <AudioSrc
+          ref={audioCharRalphRef}
+          character="ralph"
+          position={[liveCharPos.ralph.x, 1, liveCharPos.ralph.y]}
+        />
+        <AudioSrc
+          ref={audioCharOliRef}
+          character="oli"
+          position={[liveCharPos.oli.x, 1, liveCharPos.oli.y]}
+        />
+        <AudioSrc
+          ref={audioCharJoelRef}
+          character="joel"
+          position={[liveCharPos.joel.x, 1, liveCharPos.joel.y]}
+        />
       </group>
 
       <Html fullscreen>
@@ -217,7 +273,7 @@ const Objects = () => {
           <div style={{ whiteSpace: "pre-line", fontSize: "10px" }}>
             {/*status*/}
           </div>
-          <div>{myPresence.character}</div>
+          <div>Moving as {myPresence.character}</div>
           <div>
             {myPresence.position?.x.toFixed(2)}/
             {myPresence.position?.y.toFixed(2)}
@@ -234,7 +290,7 @@ const Objects = () => {
           }}
         >
           <button
-            style={{ fontSize: "2em" }}
+            style={{ fontSize: "1.5em" }}
             onClick={() => {
               updateMyPresence({ character: "ralph" });
             }}
@@ -242,7 +298,7 @@ const Objects = () => {
             Ralph
           </button>
           <button
-            style={{ fontSize: "2em" }}
+            style={{ fontSize: "1.5em" }}
             onClick={() => {
               updateMyPresence({ character: "joel" });
             }}
@@ -250,7 +306,15 @@ const Objects = () => {
             Joel
           </button>
           <button
-            style={{ fontSize: "2em" }}
+            style={{ fontSize: "1.5em" }}
+            onClick={() => {
+              updateMyPresence({ character: "siah" });
+            }}
+          >
+            Siah
+          </button>
+          <button
+            style={{ fontSize: "1.5em" }}
             onClick={() => {
               updateMyPresence({ character: "oli" });
             }}
@@ -265,13 +329,27 @@ const Objects = () => {
 
 const AudioSrc = forwardRef(
   (
-    { position }: { position: [x: number, y: number, z: number] },
+    {
+      position,
+      character,
+    }: { position: [x: number, y: number, z: number]; character?: string },
+
     ref: Ref<THREE.Mesh>
   ) => {
+    const color =
+      character === "ralph"
+        ? "brown"
+        : character === "joel"
+        ? "orange"
+        : character === "oli"
+        ? "purple"
+        : character === "siah"
+        ? "teal"
+        : "black";
     return (
       <mesh position={position} ref={ref}>
-        <sphereGeometry args={[0.75, 12, 12]} />
-        <meshBasicMaterial color="blue" />
+        <sphereGeometry args={[0.5, 12, 12]} />
+        <meshBasicMaterial color={color} />
       </mesh>
     );
   }

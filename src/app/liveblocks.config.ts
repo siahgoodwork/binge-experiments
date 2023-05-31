@@ -1,4 +1,4 @@
-import { createClient } from "@liveblocks/client";
+import { createClient, LiveMap, LiveObject } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
 console.log(process.env.NEXT_PUBLIC_LIVEBLOCKS_KEY);
 
@@ -14,6 +14,16 @@ type Presence = {
   character: string | null;
 };
 
+type CPresence = {
+  position: { x: number; y: number } | null;
+  character: "ralph" | "joel" | "oli" | "siah";
+};
+
+export type Position = {
+  x: number;
+  y: number;
+};
+
 // Optionally, Storage represents the shared document that persists in the
 // Room, even after all Users leave. Fields under Storage typically are
 // LiveList, LiveMap, LiveObject instances, for which updates are
@@ -21,6 +31,10 @@ type Presence = {
 type Storage = {
   // animals: LiveList<string>,
   // ...
+  ralph: LiveObject<Position>;
+  oli: LiveObject<Position>;
+  siah: LiveObject<Position>;
+  joel: LiveObject<Position>;
 };
 
 // Optionally, the type of custom events broadcasted and listened for in this
@@ -28,9 +42,14 @@ type Storage = {
 // type RoomEvent = {};
 
 export const {
-  RoomProvider,
-  useMyPresence,
-  useObject,
-  useOthers,
-  useUpdateMyPresence,
+  suspense: {
+    RoomProvider,
+    useMutation,
+    useMyPresence,
+    useRoom,
+    useObject,
+    useOthers,
+    useUpdateMyPresence,
+    useStorage,
+  },
 } = createRoomContext<Presence, Storage /* UserMeta, RoomEvent */>(client);

@@ -4,6 +4,11 @@ import { Html, OrthographicCamera } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { forwardRef, Ref, useCallback, useRef, useState } from "react";
 import * as THREE from "three";
+import {
+  useMyPresence,
+  useOthers,
+  useUpdateMyPresence,
+} from "../liveblocks.config";
 
 const Scene = () => {
   return (
@@ -33,8 +38,9 @@ const initiateAudio = ({
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(src.audio, function (buffer) {
       sound.setBuffer(buffer);
-      sound.setRefDistance(0.5);
-      sound.setMaxDistance(1);
+      sound.setRefDistance(0.3);
+      sound.setMaxDistance(100);
+      sound.setDistanceModel("exponential");
       sound.loop = true;
       sound.play();
       src.object.add(sound);
@@ -52,7 +58,12 @@ const Objects = () => {
   const audioObj2Ref = useRef<THREE.Mesh>(null!);
   const audioObj3Ref = useRef<THREE.Mesh>(null!);
 
+  const updateMyPresence = useUpdateMyPresence();
+  const [myPresence] = useMyPresence();
+  const others = useOthers();
+
   const [status, setStatus] = useState("");
+
   const success: PositionCallback = useCallback(
     (position) => {
       const latitude = position.coords.latitude;
@@ -75,8 +86,11 @@ const Objects = () => {
 
       const destination = destinationRef.current;
       destination.set(newPosX, 1, newPosZ);
+      updateMyPresence({
+        position: { x: newPosX, y: newPosZ },
+      });
     },
-    [setStatus]
+    [setStatus, updateMyPresence]
   );
 
   const error = () => {};
@@ -145,6 +159,10 @@ const Objects = () => {
                 y: worldSize.h - y * worldSize.h - worldSize.h / 2,
               };
               destinationRef.current.set(worldXY.x, 1, worldXY.y);
+
+              updateMyPresence({
+                position: { x: worldXY.x, y: worldXY.y },
+              });
             }
           }}
         >
@@ -163,35 +181,82 @@ const Objects = () => {
             position: "absolute",
             top: "20px",
             right: "20px",
+            display: "flex",
+            width: "calc(100% - 40px)",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <button
+              onClick={() => {
+                initiateAudio({
+                  player: playerRef.current,
+                  audioSources: [
+                    {
+                      object: audioObj1Ref.current,
+                      audio: "/clock-ticking-2.mp3",
+                    },
+                    { object: audioObj2Ref.current, audio: "/joel.m4a" },
+                    { object: audioObj3Ref.current, audio: "/oli.m4a" },
+                  ],
+                });
+              }}
+            >
+              start
+            </button>
+
+            <button
+              onClick={() => {
+                triggerGeo();
+              }}
+            >
+              Geolocate
+            </button>
+          </div>
+
+          <div style={{ whiteSpace: "pre-line", fontSize: "10px" }}>
+            {/*status*/}
+          </div>
+          <div>{myPresence.character}</div>
+          <div>
+            {myPresence.position?.x.toFixed(2)}/
+            {myPresence.position?.y.toFixed(2)}
+          </div>
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            bottom: "20px",
+            right: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+            width: "calc(100% - 40px)",
           }}
         >
           <button
+            style={{ fontSize: "2em" }}
             onClick={() => {
-              initiateAudio({
-                player: playerRef.current,
-                audioSources: [
-                  {
-                    object: audioObj1Ref.current,
-                    audio: "/clock-ticking-2.mp3",
-                  },
-                  { object: audioObj2Ref.current, audio: "/joel.m4a" },
-                  { object: audioObj3Ref.current, audio: "/oli.m4a" },
-                ],
-              });
+              updateMyPresence({ character: "ralph" });
             }}
           >
-            start
+            Ralph
           </button>
-          <br />
           <button
+            style={{ fontSize: "2em" }}
             onClick={() => {
-              triggerGeo();
+              updateMyPresence({ character: "joel" });
             }}
           >
-            Geolocate
+            Joel
           </button>
-          <br />
-          <div style={{ whiteSpace: "pre-line" }}>{status}</div>
+          <button
+            style={{ fontSize: "2em" }}
+            onClick={() => {
+              updateMyPresence({ character: "oli" });
+            }}
+          >
+            Oli
+          </button>
         </div>
       </Html>
     </group>

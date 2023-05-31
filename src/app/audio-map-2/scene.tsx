@@ -153,7 +153,7 @@ const Objects = () => {
         </mesh>
 
         <AudioSrc ref={audioObj1Ref} position={[6, 1, 3]} />
-        <AudioSrc ref={audioObj2Ref} position={[-6, 1, -3]} />
+        <AudioSrc ref={audioObj2Ref} position={[8, 1, -3]} />
         <AudioSrc ref={audioObj3Ref} position={[-9, 1, 4]} />
       </group>
 

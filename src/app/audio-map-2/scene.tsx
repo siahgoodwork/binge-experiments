@@ -41,7 +41,7 @@ const initiateAudio = ({
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(src.audio, function (buffer) {
       sound.setBuffer(buffer);
-      sound.setRefDistance(0.3);
+      sound.setRefDistance(1);
       sound.setMaxDistance(100);
       sound.setDistanceModel("exponential");
       sound.loop = true;
@@ -132,7 +132,9 @@ const Objects = () => {
   const error = () => {};
 
   const triggerGeo = () => {
-    navigator.geolocation.watchPosition(success, error);
+    navigator.geolocation.watchPosition(success, error, {
+      enableHighAccuracy: true,
+    });
   };
 
   useFrame(() => {
@@ -149,7 +151,7 @@ const Objects = () => {
           const nextPos = new THREE.Vector3().lerpVectors(
             curPos,
             destination,
-            0.03
+            0.5
           );
           player.position.set(nextPos.x, nextPos.y, nextPos.z);
           const lookAtPos = new THREE.Vector3().lerpVectors(
@@ -157,7 +159,7 @@ const Objects = () => {
             destination,
             -1
           );
-          player.lookAt(lookAtPos);
+          //player.lookAt(lookAtPos);
         }
       }
     }

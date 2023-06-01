@@ -41,9 +41,8 @@ const initiateAudio = ({
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(src.audio, function (buffer) {
       sound.setBuffer(buffer);
-      sound.setRefDistance(1);
-      sound.setMaxDistance(100);
-      sound.setDistanceModel("exponential");
+      sound.setRefDistance(0.5);
+      sound.setMaxDistance(10000000);
       sound.loop = true;
       sound.play();
       src.object.add(sound);
@@ -261,10 +260,22 @@ const Objects = () => {
                     //{ object: audioObj1Ref.current, audio: "/joel.m4a" },
                     //{ object: audioObj2Ref.current, audio: "/joel.m4a" },
                     //{ object: audioObj3Ref.current, audio: "/oli.m4a" },
-                    { object: audioCharOliRef.current, audio: "/park-1.mp3" },
-                    { object: audioCharJoelRef.current, audio: "/park-2.mp3" },
-                    { object: audioCharSiahRef.current, audio: "/park-3.mp3" },
-                    { object: audioCharRalphRef.current, audio: "/park-4.mp3" },
+                    {
+                      object: audioCharOliRef.current,
+                      audio: "/simple/oli.mp3",
+                    },
+                    {
+                      object: audioCharJoelRef.current,
+                      audio: "/simple/joel.mp3",
+                    },
+                    {
+                      object: audioCharSiahRef.current,
+                      audio: "/simple/kfc.mp3",
+                    },
+                    {
+                      object: audioCharRalphRef.current,
+                      audio: "/simple/ralph.mp3",
+                    },
                   ],
                 });
               }}

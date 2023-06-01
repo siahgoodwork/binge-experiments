@@ -69,7 +69,7 @@ const Objects = () => {
   const [myPresence, updateMyPresence] = useMyPresence();
   const liveCharPos = useStorage((root) => root);
 
-  const worldMap = useTexture("/map-park.jpg");
+  const worldMap = useTexture("/map-queen.jpg");
 
   const setCharPos = useMutation(({ storage, self }) => {
     if (!self.presence.character) {
@@ -94,9 +94,14 @@ const Objects = () => {
       const heading = position.coords.heading;
       setStatus(`lat: ${latitude}\nlon: ${longitude}\nhead: ${heading}`);
 
+      // const bounds = {
+      //   lat: { min: -41.292339, max: -41.2904 },
+      //   lon: { min: 174.783457, max: 174.786897 },
+      // };
+
       const bounds = {
-        lat: { min: -41.292339, max: -41.2904 },
-        lon: { min: 174.783457, max: 174.786897 },
+        lat: { min: -41.295739, max: -41.300392 },
+        lon: { min: 174.783103, max: 174.788581 },
       };
 
       const posNorm = {
@@ -112,7 +117,7 @@ const Objects = () => {
       );
 
       const newPosX = -1 * (worldSize.w / 2) + worldSize.w * posNorm.x;
-      const newPosZ = (-1 * worldSize.h) / 2 + -1 * worldSize.h * posNorm.y;
+      const newPosZ = (-1 * worldSize.h) / 2 + worldSize.h * posNorm.y;
 
       const destination = destinationRef.current;
       destination.set(newPosX, 1, newPosZ);
@@ -172,7 +177,7 @@ const Objects = () => {
         makeDefault
         ref={cam}
         position={[0, 8, 7]}
-        zoom={15}
+        zoom={14}
       />
       <group>
         <group position={[0, 1, 0]} ref={playerRef}>

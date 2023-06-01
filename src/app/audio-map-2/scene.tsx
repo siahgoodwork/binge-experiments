@@ -69,7 +69,8 @@ const Objects = () => {
   const [myPresence, updateMyPresence] = useMyPresence();
   const liveCharPos = useStorage((root) => root);
 
-  const worldMap = useTexture("/map-queen.jpg");
+  const worldMap = useTexture("/map-park.jpg");
+  //const worldMap = useTexture("/map-queen.jpg");
 
   const setCharPos = useMutation(({ storage, self }) => {
     if (!self.presence.character) {
@@ -94,15 +95,15 @@ const Objects = () => {
       const heading = position.coords.heading;
       setStatus(`lat: ${latitude}\nlon: ${longitude}\nhead: ${heading}`);
 
-      // const bounds = {
-      //   lat: { min: -41.292339, max: -41.2904 },
-      //   lon: { min: 174.783457, max: 174.786897 },
-      // };
-
       const bounds = {
-        lat: { min: -41.295739, max: -41.300392 },
-        lon: { min: 174.783103, max: 174.788581 },
+        lat: { min: -41.2904, max: -41.292339 },
+        lon: { min: 174.783457, max: 174.786897 },
       };
+
+      // const bounds = {
+      //   lat: { min: -41.295739, max: -41.300392 },
+      //   lon: { min: 174.783103, max: 174.788581 },
+      // };
 
       const posNorm = {
         x: (longitude - bounds.lon.min) / (bounds.lon.max - bounds.lon.min),

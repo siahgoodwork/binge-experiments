@@ -42,7 +42,8 @@ const initiateAudio = ({
     audioLoader.load(src.audio, function (buffer) {
       sound.setBuffer(buffer);
       sound.setRefDistance(0.5);
-      sound.setMaxDistance(10000000);
+      sound.setMaxDistance(3);
+      sound.setDistanceModel("linear");
       sound.loop = true;
       sound.play();
       src.object.add(sound);
@@ -295,7 +296,11 @@ const Objects = () => {
           <div style={{ whiteSpace: "pre-line", fontSize: "10px" }}>
             {status}
           </div>
-          <div>Moving as {myPresence.character}</div>
+          <div>
+            Moving as {myPresence.character}
+            <br />
+            v1.1
+          </div>
           <div>
             {myPresence.position?.x.toFixed(2)}/
             {myPresence.position?.y.toFixed(2)}

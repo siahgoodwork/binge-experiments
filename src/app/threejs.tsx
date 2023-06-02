@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import * as faceapi from "face-api.js";
+import { useRouter } from "next/router";
 
-const videoWidth = 300;
-const videoHeight = 200;
+const videoWidth = 600;
+const videoHeight = 400;
 
 export const ThreeScene = () => {
   const [mouseX, setMouseX] = useState(0);
@@ -21,7 +22,7 @@ export const ThreeScene = () => {
   const audioSrc2Gain = useRef<GainNode>();
   const audioSrc3Gain = useRef<GainNode>();
 
-  const startIt = () => {
+  const startIt = (listener: number) => {
     let audioCtx: AudioContext | undefined = audioCtxRef.current;
     if (audioCtx === undefined) {
       return;
@@ -33,9 +34,23 @@ export const ThreeScene = () => {
     let req2 = new XMLHttpRequest();
     let req3 = new XMLHttpRequest();
 
-    req1.open("GET", "/oli-2.m4a", true);
-    req3.open("GET", "/clock-ticking-2.mp3", true);
-    req2.open("GET", "/joel-2.m4a", true);
+    const leftTrack =
+      listener === 0
+        ? "oli-2.m4a"
+        : listener === 1
+        ? "joel-2.m4a"
+        : "clock-ticking-2.mp3";
+
+    const rightTrack =
+      listener === 0
+        ? "joel-2.m4a"
+        : listener === 1
+        ? "joel-2.m4a"
+        : "clock-ticking-2.mp3";
+
+    req1.open("GET", leftTrack, true);
+    req2.open("GET", rightTrack, true);
+    // req2.open("GET", "/joel-2.m4a", true);
     req1.responseType = "arraybuffer";
     req2.responseType = "arraybuffer";
     req3.responseType = "arraybuffer";
@@ -116,7 +131,7 @@ export const ThreeScene = () => {
   const startVideo = () => {
     setCaptureVideo(true);
     navigator.mediaDevices
-      .getUserMedia({ video: { width: 300 } })
+      .getUserMedia({ video: { width: 600 } })
       .then((stream) => {
         let video = videoRef.current;
         if (video) {
@@ -209,25 +224,31 @@ export const ThreeScene = () => {
   const normMouseX = 1 - (mouseX + 0.5);
 
   useEffect(() => {
-    const bleed = 0.01;
+    //const bleed = 0.01;
     if (audioSrc1Gain.current) {
-      let a =
-        1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.165) / 0.165));
-      a = Math.min(1, bleed + a);
-      audioSrc1Gain.current.gain.value = a;
+      // let a =
+      //   1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.165) / 0.165));
+      // a = Math.min(1, bleed + a);
+      // audioSrc1Gain.current.gain.value = a;
+
+      audioSrc1Gain.current.gain.value = normMouseX < 0.5 ? 1 : 0;
     }
 
     if (audioSrc2Gain.current) {
-      let a = 1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.5) / 0.165));
+      // let a = 1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.5) / 0.165));
 
-      a = Math.min(1, bleed + a);
-      audioSrc2Gain.current.gain.value = a;
+      // a = Math.min(1, bleed + a);
+      // audioSrc2Gain.current.gain.value = a;
+
+      audioSrc2Gain.current.gain.value = normMouseX > 0.5 ? 1 : 0;
     }
 
     if (audioSrc3Gain.current) {
-      let a = 1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.83) / 0.165));
-      a = Math.min(1, bleed + a);
-      audioSrc3Gain.current.gain.value = a;
+      // let a = 1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.83) / 0.165));
+      // a = Math.min(1, bleed + a);
+      // audioSrc3Gain.current.gain.value = a;
+
+      audioSrc3Gain.current.gain.value = 0;
     }
   }, [normMouseX]);
 
@@ -237,7 +258,7 @@ export const ThreeScene = () => {
         width: "100vw",
         height: "100%",
         position: "fixed",
-        background: "yellow",
+        background: "#ccccdd",
         top: 0,
         left: 0,
       }}
@@ -251,7 +272,6 @@ export const ThreeScene = () => {
           transform: "translate(-50%, 0)",
         }}
       >
-        {1 - (mouseX + 0.5)}
         <div style={{ display: "flex", padding: "10px", gap: "10px" }}>
           {captureVideo && modelsLoaded ? (
             <button
@@ -291,7 +311,9 @@ export const ThreeScene = () => {
 
           <button
             onClick={() => {
-              startIt();
+              const listenerId = window.location.search.replace("?", "");
+              console.log(listenerId);
+              startIt(parseInt(listenerId));
             }}
             style={{
               cursor: "pointer",
@@ -338,80 +360,17 @@ export const ThreeScene = () => {
         style={{
           width: "10px",
           height: "10px",
-          background: "black",
+          background: "#8686A2",
           display: "block",
           textIndent: "-100em",
           overflow: "hidden",
           position: "absolute",
           left: `${window ? window.innerWidth * (1 - (mouseX + 0.5)) : 0}px`,
-          top: "50%",
+          top: "0",
         }}
       >
         .
       </b>
-      <div
-        className="audioTracks"
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-        }}
-      >
-        <div
-          style={{
-            width: "33.333%",
-            height: "20%",
-            borderBottom: "1px solid #fff",
-          }}
-        >
-          <input
-            style={{ width: "100%", height: "100%" }}
-            type="file"
-            id="audio1"
-            className="audio"
-          />
-          {(
-            1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.165) / 0.165))
-          ).toFixed(1)}
-        </div>
-        <div
-          style={{
-            width: "33.333%",
-            height: "20%",
-            borderBottom: "1px solid #fff",
-          }}
-        >
-          <input
-            style={{ width: "100%", height: "100%" }}
-            type="file"
-            id="audio1"
-            className="audio"
-          />
-
-          {(
-            1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.5) / 0.165))
-          ).toFixed(1)}
-        </div>
-        <div
-          style={{
-            width: "33.333%",
-            height: "20%",
-            borderBottom: "1px solid #fff",
-          }}
-        >
-          <input
-            style={{ width: "100%", height: "100%" }}
-            type="file"
-            id="audio1"
-            className="audio"
-          />
-
-          {(
-            1 - Math.max(0, Math.min(1, Math.abs(normMouseX - 0.83) / 0.165))
-          ).toFixed(1)}
-        </div>
-      </div>
     </div>
   );
 };

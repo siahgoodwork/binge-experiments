@@ -20,6 +20,7 @@ const Scene = () => {
         toneMapping: THREE.ACESFilmicToneMapping,
       }}
     >
+      <ambientLight color="white" intensity={3} />
       <Objects />
     </Canvas>
   );
@@ -31,7 +32,11 @@ const initiateAudio = ({
   audioSources,
 }: {
   player: THREE.Group | THREE.Mesh;
-  audioSources: { object: THREE.Group | THREE.Mesh; audio: string }[];
+  audioSources: {
+    object: THREE.Group | THREE.Mesh;
+    audio: string;
+    radius: number;
+  }[];
 }) => {
   const listener = new THREE.AudioListener();
   player.add(listener);
@@ -41,8 +46,8 @@ const initiateAudio = ({
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(src.audio, function (buffer) {
       sound.setBuffer(buffer);
-      sound.setRefDistance(0.5);
-      sound.setMaxDistance(3);
+      sound.setRefDistance(0.3);
+      sound.setMaxDistance(src.radius);
       sound.setDistanceModel("linear");
       sound.loop = true;
       sound.play();
@@ -60,6 +65,9 @@ const Objects = () => {
   const audioObj1Ref = useRef<THREE.Mesh>(null!);
   const audioObj2Ref = useRef<THREE.Mesh>(null!);
   const audioObj3Ref = useRef<THREE.Mesh>(null!);
+  const audioObj1FocusRef = useRef<THREE.Mesh>(null!);
+  const audioObj2FocusRef = useRef<THREE.Mesh>(null!);
+  const audioObj3FocusRef = useRef<THREE.Mesh>(null!);
 
   const audioCharSiahRef = useRef<THREE.Mesh>(null!);
   const audioCharRalphRef = useRef<THREE.Mesh>(null!);
@@ -109,13 +117,6 @@ const Objects = () => {
         x: (longitude - bounds.lon.min) / (bounds.lon.max - bounds.lon.min),
         y: (latitude - bounds.lat.min) / (bounds.lat.max - bounds.lat.min),
       };
-
-      console.log(
-        latitude,
-        bounds.lat.min,
-        bounds.lat.max,
-        (latitude - bounds.lat.min) / (bounds.lat.max - bounds.lat.min)
-      );
 
       const newPosX = -1 * (worldSize.w / 2) + worldSize.w * posNorm.x;
       const newPosZ = (-1 * worldSize.h) / 2 + worldSize.h * posNorm.y;
@@ -178,7 +179,7 @@ const Objects = () => {
         makeDefault
         ref={cam}
         position={[0, 8, 7]}
-        zoom={14}
+        zoom={20}
       />
       <group>
         <group position={[0, 1, 0]} ref={playerRef}>
@@ -221,9 +222,18 @@ const Objects = () => {
           <meshBasicMaterial map={worldMap} />
         </mesh>
 
-        <AudioSrc ref={audioObj1Ref} position={[6, 1, 3]} />
-        <AudioSrc ref={audioObj2Ref} position={[8, 1, -3]} />
-        <AudioSrc ref={audioObj3Ref} position={[-9, 1, 4]} />
+        {/* jungle*/}
+        <AudioSrc ref={audioObj1FocusRef} position={[-1, 0, 8]} />
+        <AudioSrc ref={audioObj1Ref} radius={4} position={[0, 0, 8]} />
+
+        <AudioSrc ref={audioObj2FocusRef} position={[-5.3, 0, 0]} />
+        <AudioSrc ref={audioObj2Ref} radius={4} position={[-4.3, 0, 1]} />
+
+        {/* underwater */}
+        <AudioSrc ref={audioObj3FocusRef} radius={4} position={[3, 0, -1]} />
+
+        {/* shore */}
+        <AudioSrc ref={audioObj3Ref} radius={4} position={[2, 0, 1]} />
 
         <AudioSrc
           ref={audioCharSiahRef}
@@ -264,24 +274,67 @@ const Objects = () => {
                 initiateAudio({
                   player: playerRef.current,
                   audioSources: [
-                    //{ object: audioObj1Ref.current, audio: "/joel.m4a" },
-                    //{ object: audioObj2Ref.current, audio: "/joel.m4a" },
-                    //{ object: audioObj3Ref.current, audio: "/oli.m4a" },
+                    // jungle
+                    {
+                      object: audioObj1Ref.current,
+                      radius: 3,
+                      audio: "/land-sound/jungle.mp3",
+                    },
+
+                    // tiger
+                    {
+                      object: audioObj1FocusRef.current,
+                      radius: 2,
+                      audio: "/land-sound/tiger.mp3",
+                    },
+
+                    // mountain
+                    {
+                      object: audioObj2Ref.current,
+                      radius: 3,
+                      audio: "/land-sound/mountain.mp3",
+                    },
+
+                    // birds
+                    {
+                      object: audioObj2FocusRef.current,
+                      radius: 2,
+                      audio: "/land-sound/bird.mp3",
+                    },
+
+                    // shore
+                    {
+                      object: audioObj3Ref.current,
+                      radius: 3,
+                      audio: "/land-sound/shore.mp3",
+                    },
+
+                    // underwater
+                    {
+                      object: audioObj3FocusRef.current,
+                      radius: 3,
+                      audio: "/land-sound/underwater.mp3",
+                    },
+
                     {
                       object: audioCharOliRef.current,
-                      audio: "/simple/oli.mp3",
+                      audio: "/land-sound/parktones-2.mp3",
+                      radius: 2,
                     },
                     {
                       object: audioCharJoelRef.current,
-                      audio: "/simple/joel.mp3",
+                      audio: "/land-sound/parktones-5.mp3",
+                      radius: 2,
                     },
                     {
                       object: audioCharSiahRef.current,
-                      audio: "/simple/kfc.mp3",
+                      audio: "/land-sound/parktones-6.mp3",
+                      radius: 2,
                     },
                     {
                       object: audioCharRalphRef.current,
-                      audio: "/simple/ralph.mp3",
+                      audio: "/land-sound/parktones-8.mp3",
+                      radius: 2,
                     },
                   ],
                 });
@@ -365,7 +418,12 @@ const AudioSrc = forwardRef(
     {
       position,
       character,
-    }: { position: [x: number, y: number, z: number]; character?: string },
+      radius,
+    }: {
+      position: [x: number, y: number, z: number];
+      character?: string;
+      radius?: number;
+    },
 
     ref: Ref<THREE.Mesh>
   ) => {
@@ -378,11 +436,11 @@ const AudioSrc = forwardRef(
         ? "purple"
         : character === "siah"
         ? "teal"
-        : "black";
+        : "yellow";
     return (
       <mesh position={position} ref={ref}>
-        <sphereGeometry args={[0.5, 12, 12]} />
-        <meshBasicMaterial color={color} />
+        <sphereGeometry args={[radius ? radius / 2 : 0.5, 12, 12]} />
+        <meshStandardMaterial color={color} opacity={0.6} transparent={true} />
       </mesh>
     );
   }

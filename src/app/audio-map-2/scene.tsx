@@ -355,7 +355,7 @@ const Objects = () => {
                 (e.target as HTMLButtonElement).disabled = true;
               }}
             >
-              Geolocate
+              locate
             </button>
           </div>
 
@@ -371,7 +371,8 @@ const Objects = () => {
             v1.2
           </div>
           <div>
-            {myPresence.position?.x.toFixed(2)}/
+            {myPresence.position?.x.toFixed(2)}
+            <br />
             {myPresence.position?.y.toFixed(2)}
           </div>
         </div>

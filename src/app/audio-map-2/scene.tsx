@@ -16,6 +16,9 @@ import {
 const Scene = () => {
   return (
     <Canvas
+      style={{
+        background: "#e1e1e1",
+      }}
       gl={{
         toneMapping: THREE.ACESFilmicToneMapping,
       }}
@@ -77,7 +80,7 @@ const Objects = () => {
   const [myPresence, updateMyPresence] = useMyPresence();
   const liveCharPos = useStorage((root) => root);
 
-  const worldMap = useTexture("/map-park.jpg");
+  const [worldMap, personMap] = useTexture(["/map-park.jpg", "/person.png"]);
   //const worldMap = useTexture("/map-queen.jpg");
 
   const setCharPos = useMutation(({ storage, self }) => {
@@ -108,6 +111,7 @@ const Objects = () => {
         lon: { min: 174.783457, max: 174.786897 },
       };
 
+      // queen st
       // const bounds = {
       //   lat: { min: -41.295739, max: -41.300392 },
       //   lon: { min: 174.783103, max: 174.788581 },
@@ -183,14 +187,9 @@ const Objects = () => {
       />
       <group>
         <group position={[0, 1, 0]} ref={playerRef}>
-          <mesh>
-            <sphereGeometry args={[0.85, 24, 24]} />
+          <mesh position={[0, 2.5, 0]}>
+            <sphereGeometry args={[0.35, 24, 24]} />
             <meshBasicMaterial color="#00aa35" />
-          </mesh>
-
-          <mesh position={[0, 0.8, -0.5]}>
-            <boxGeometry />
-            <meshBasicMaterial color="#33bb33" />
           </mesh>
         </group>
 
@@ -223,37 +222,41 @@ const Objects = () => {
         </mesh>
 
         {/* jungle*/}
-        <AudioSrc ref={audioObj1FocusRef} position={[-1, 0, 8]} />
-        <AudioSrc ref={audioObj1Ref} radius={4} position={[0, 0, 8]} />
+        <AudioSrc ref={audioObj1FocusRef} radius={1} position={[-1, 0.2, 8]} />
+        <AudioSrc ref={audioObj1Ref} radius={4} position={[0, 0.1, 8]} />
 
-        <AudioSrc ref={audioObj2FocusRef} position={[-5.3, 0, 0]} />
-        <AudioSrc ref={audioObj2Ref} radius={4} position={[-4.3, 0, 1]} />
+        <AudioSrc
+          ref={audioObj2FocusRef}
+          radius={1}
+          position={[-5.3, 0.13, 0]}
+        />
+        <AudioSrc ref={audioObj2Ref} radius={4} position={[-4.3, 0.1, 1]} />
 
         {/* underwater */}
-        <AudioSrc ref={audioObj3FocusRef} radius={4} position={[3, 0, -1]} />
+        <AudioSrc ref={audioObj3FocusRef} radius={4} position={[3, 0.13, -1]} />
 
         {/* shore */}
-        <AudioSrc ref={audioObj3Ref} radius={4} position={[2, 0, 1]} />
+        <AudioSrc ref={audioObj3Ref} radius={4} position={[2, 0.1, 1]} />
 
         <AudioSrc
           ref={audioCharSiahRef}
           character="siah"
-          position={[liveCharPos.siah.x, 1, liveCharPos.siah.y]}
+          position={[liveCharPos.siah.x, 1.5, liveCharPos.siah.y]}
         />
         <AudioSrc
           ref={audioCharRalphRef}
           character="ralph"
-          position={[liveCharPos.ralph.x, 1, liveCharPos.ralph.y]}
+          position={[liveCharPos.ralph.x, 1.5, liveCharPos.ralph.y]}
         />
         <AudioSrc
           ref={audioCharOliRef}
           character="oli"
-          position={[liveCharPos.oli.x, 1, liveCharPos.oli.y]}
+          position={[liveCharPos.oli.x, 1.5, liveCharPos.oli.y]}
         />
         <AudioSrc
           ref={audioCharJoelRef}
           character="joel"
-          position={[liveCharPos.joel.x, 1, liveCharPos.joel.y]}
+          position={[liveCharPos.joel.x, 1.5, liveCharPos.joel.y]}
         />
       </group>
 
@@ -270,7 +273,8 @@ const Objects = () => {
         >
           <div>
             <button
-              onClick={() => {
+              style={{ height: "40px", width: "80px" }}
+              onClick={(e) => {
                 initiateAudio({
                   player: playerRef.current,
                   audioSources: [
@@ -338,76 +342,131 @@ const Objects = () => {
                     },
                   ],
                 });
+                (e.target as HTMLButtonElement).disabled = true;
               }}
             >
               start
             </button>
 
             <button
-              onClick={() => {
+              style={{ height: "40px", width: "80px" }}
+              onClick={(e) => {
                 triggerGeo();
+                (e.target as HTMLButtonElement).disabled = true;
               }}
             >
               Geolocate
             </button>
           </div>
 
-          <div style={{ whiteSpace: "pre-line", fontSize: "10px" }}>
-            {status}
-          </div>
+          {/*
+						<div style={{ whiteSpace: "pre-line", fontSize: "10px" }}>
+							{status}
+						</div>
+
+						*/}
           <div>
-            Moving as {myPresence.character}
+            I am {myPresence.character}
             <br />
-            v1.1
+            v1.2
           </div>
           <div>
             {myPresence.position?.x.toFixed(2)}/
             {myPresence.position?.y.toFixed(2)}
           </div>
         </div>
-        <div
-          style={{
-            position: "absolute",
-            bottom: "20px",
-            right: "20px",
-            display: "flex",
-            justifyContent: "space-between",
-            width: "calc(100% - 40px)",
-          }}
-        >
-          <button
-            style={{ fontSize: "1.5em" }}
-            onClick={() => {
-              updateMyPresence({ character: "ralph" });
+        {myPresence.character === null && (
+          <div
+            style={{
+              background: "#f3f3f3",
+              width: "100%",
+              height: "100%",
+              zIndex: "40",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
             }}
           >
-            Ralph
-          </button>
-          <button
-            style={{ fontSize: "1.5em" }}
-            onClick={() => {
-              updateMyPresence({ character: "joel" });
-            }}
-          >
-            Joel
-          </button>
-          <button
-            style={{ fontSize: "1.5em" }}
-            onClick={() => {
-              updateMyPresence({ character: "siah" });
-            }}
-          >
-            Siah
-          </button>
-          <button
-            style={{ fontSize: "1.5em" }}
-            onClick={() => {
-              updateMyPresence({ character: "oli" });
-            }}
-          >
-            Oli
-          </button>
-        </div>
+            <h1>Select Your Character</h1>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "100px 100px",
+                gridTemplateRows: "50px 50px 50px 40px",
+                gap: "10px",
+              }}
+            >
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "ralph" });
+                }}
+              >
+                Ralph
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "ralph" });
+                }}
+              >
+                Ralph
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "ralph" });
+                }}
+              >
+                Ralph
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "ralph" });
+                }}
+              >
+                Ralph
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "ralph" });
+                }}
+              >
+                Ralph
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "joel" });
+                }}
+              >
+                Joel
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "siah" });
+                }}
+              >
+                Siah
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "oli" });
+                }}
+              >
+                Oli
+              </button>
+            </div>
+          </div>
+        )}{" "}
       </Html>
     </group>
   );
@@ -427,6 +486,11 @@ const AudioSrc = forwardRef(
 
     ref: Ref<THREE.Mesh>
   ) => {
+    const [personMap, areaSmallMap, areaAlphaMap] = useTexture([
+      "/person.png",
+      "/area-small-alpha.png",
+      "/area-alpha.png",
+    ]);
     const color =
       character === "ralph"
         ? "brown"
@@ -437,10 +501,29 @@ const AudioSrc = forwardRef(
         : character === "siah"
         ? "teal"
         : "yellow";
+
+    if (character) {
+      return (
+        <mesh position={position} ref={ref}>
+          <planeBufferGeometry args={[1, 3]} />
+          <meshBasicMaterial map={personMap} transparent={true} />
+        </mesh>
+      );
+    }
     return (
-      <mesh position={position} ref={ref}>
-        <sphereGeometry args={[radius ? radius / 2 : 0.5, 12, 12]} />
-        <meshStandardMaterial color={color} opacity={0.6} transparent={true} />
+      <mesh position={position} ref={ref} rotation={[Math.PI / -2, 0, 0]}>
+        <planeGeometry args={[radius ? radius : 0.5, radius ? radius : 0.5]} />
+        {/*
+					<sphereGeometry args={[radius ? radius / 2 : 0.5, 12, 12]} />
+					*/}
+
+        <meshBasicMaterial
+          // map={areaMap}
+          color="blue"
+          transparent={true}
+          depthWrite={false}
+          alphaMap={radius && radius < 2 ? areaSmallMap : areaAlphaMap}
+        />
       </mesh>
     );
   }

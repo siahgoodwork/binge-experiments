@@ -5,7 +5,7 @@ const Page: NextPage = () => {
   return (
     <div
       style={{
-        border: "1px solid #ccc",
+        background: "#E1E1E1",
         width: "100vw",
         height: "100vh",
       }}

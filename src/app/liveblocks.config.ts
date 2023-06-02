@@ -14,11 +14,6 @@ type Presence = {
   character: string | null;
 };
 
-type CPresence = {
-  position: { x: number; y: number } | null;
-  character: "ralph" | "joel" | "oli" | "siah";
-};
-
 export type Position = {
   x: number;
   y: number;
@@ -35,6 +30,11 @@ type Storage = {
   oli: LiveObject<Position>;
   siah: LiveObject<Position>;
   joel: LiveObject<Position>;
+
+  aralph: LiveObject<Position>;
+  aoli: LiveObject<Position>;
+  asiah: LiveObject<Position>;
+  ajoel: LiveObject<Position>;
 };
 
 // Optionally, the type of custom events broadcasted and listened for in this

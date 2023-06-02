@@ -70,6 +70,7 @@ const Objects = () => {
   const audioObj3Ref = useRef<THREE.Mesh>(null!);
   const audioObj1FocusRef = useRef<THREE.Mesh>(null!);
   const audioObj2FocusRef = useRef<THREE.Mesh>(null!);
+  const audioObj2Focus2Ref = useRef<THREE.Mesh>(null!);
   const audioObj3FocusRef = useRef<THREE.Mesh>(null!);
 
   const audioCharSiahRef = useRef<THREE.Mesh>(null!);
@@ -194,7 +195,7 @@ const Objects = () => {
         <group position={[0, 1, 0]} ref={playerRef}>
           <mesh position={[0, 2.5, 0]}>
             <sphereGeometry args={[0.35, 24, 24]} />
-            <meshBasicMaterial color="#00aa35" />
+            <meshBasicMaterial color="#00aa35" visible={false} />
           </mesh>
         </group>
 
@@ -234,6 +235,12 @@ const Objects = () => {
           ref={audioObj2FocusRef}
           radius={1}
           position={[-4.3, 0.13, 0]}
+        />
+
+        <AudioSrc
+          ref={audioObj2Focus2Ref}
+          radius={1}
+          position={[-2.2, 0.13, 1]}
         />
         <AudioSrc ref={audioObj2Ref} radius={4} position={[-3.3, 0.1, 1]} />
 
@@ -337,6 +344,13 @@ const Objects = () => {
                       audio: "/land-sound/bird.mp3",
                     },
 
+                    // city
+                    {
+                      object: audioObj2Focus2Ref.current,
+                      radius: 2,
+                      audio: "/land-sound/city.mp3",
+                    },
+
                     // shore
                     {
                       object: audioObj3Ref.current,
@@ -370,27 +384,27 @@ const Objects = () => {
                     },
                     {
                       object: audioCharARalphRef.current,
-                      audio: "/energy.mp3",
+                      audio: "/land-sound/parktones-7.mp3",
                       radius: 2,
                     },
                     {
                       object: audioCharOliRef.current,
-                      audio: "/land-sound/parktones-2.mp3",
+                      audio: "/land-sound/parktones-1.mp3",
                       radius: 2,
                     },
                     {
                       object: audioCharJoelRef.current,
-                      audio: "/land-sound/parktones-5.mp3",
+                      audio: "/land-sound/parktones-3.mp3",
                       radius: 2,
                     },
                     {
                       object: audioCharSiahRef.current,
-                      audio: "/land-sound/parktones-6.mp3",
+                      audio: "/land-sound/parktones-4.mp3",
                       radius: 2,
                     },
                     {
                       object: audioCharRalphRef.current,
-                      audio: "/energy.mp3",
+                      audio: "/land-sound/parktones-8.mp3",
                       radius: 2,
                     },
                   ],
@@ -537,9 +551,9 @@ const AudioSrc = forwardRef(
     ref: Ref<THREE.Mesh>
   ) => {
     const [personMap, areaSmallMap, areaAlphaMap] = useTexture([
-      "/person.png",
-      "/area-small-alpha.png",
-      "/area-alpha.png",
+      "/area-fill-2.png",
+      "/area-fill.png",
+      "/area-fill.png",
     ]);
     const color =
       character === "ralph"
@@ -550,13 +564,29 @@ const AudioSrc = forwardRef(
         ? "purple"
         : character === "siah"
         ? "teal"
+        : character === "asiah"
+        ? "pink"
+        : character === "aoli"
+        ? "aqua"
+        : character === "ajoel"
+        ? "khaki"
         : "yellow";
 
     if (character) {
       return (
-        <mesh position={position} ref={ref}>
-          <planeBufferGeometry args={[1, 3]} />
+        <mesh position={[position[0], position[1] - 1, position[2]]} ref={ref}>
+          <planeBufferGeometry args={[0.6, 1]} />
+          {/*
           <meshBasicMaterial map={personMap} transparent={true} />
+					*/}
+
+          <meshBasicMaterial
+            // map={areaMap}
+            color={color}
+            transparent={true}
+            depthWrite={false}
+            alphaMap={personMap}
+          />
         </mesh>
       );
     }

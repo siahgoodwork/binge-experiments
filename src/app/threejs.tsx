@@ -231,7 +231,7 @@ export const ThreeScene = () => {
       // a = Math.min(1, bleed + a);
       // audioSrc1Gain.current.gain.value = a;
 
-      audioSrc1Gain.current.gain.value = normMouseX < 0.5 ? 1 : 0;
+      audioSrc1Gain.current.gain.value = normMouseX < 0.4 ? 1 : 0;
     }
 
     if (audioSrc2Gain.current) {
@@ -240,7 +240,7 @@ export const ThreeScene = () => {
       // a = Math.min(1, bleed + a);
       // audioSrc2Gain.current.gain.value = a;
 
-      audioSrc2Gain.current.gain.value = normMouseX > 0.5 ? 1 : 0;
+      audioSrc2Gain.current.gain.value = normMouseX > 0.6 ? 1 : 0;
     }
 
     if (audioSrc3Gain.current) {
@@ -258,7 +258,8 @@ export const ThreeScene = () => {
         width: "100vw",
         height: "100%",
         position: "fixed",
-        background: "#ccccdd",
+        background: "url(/headtrack/dinner.png) center no-repeat",
+        backgroundSize: "cover",
         top: 0,
         left: 0,
       }}

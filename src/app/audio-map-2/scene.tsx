@@ -333,7 +333,7 @@ const Objects = () => {
                     },
                     {
                       object: audioCharRalphRef.current,
-                      audio: "/land-sound/parktones-8.mp3",
+                      audio: "/energy.mp3",
                       radius: 2,
                     },
                   ],

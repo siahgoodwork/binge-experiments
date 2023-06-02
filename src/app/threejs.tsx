@@ -77,7 +77,7 @@ export const ThreeScene = () => {
 
           source.connect(gainNode);
           source.playbackRate.value = 1;
-          source.loop = true;
+          source.loop = false;
           source.start();
         }
       );

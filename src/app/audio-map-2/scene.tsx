@@ -77,6 +77,11 @@ const Objects = () => {
   const audioCharOliRef = useRef<THREE.Mesh>(null!);
   const audioCharJoelRef = useRef<THREE.Mesh>(null!);
 
+  const audioCharASiahRef = useRef<THREE.Mesh>(null!);
+  const audioCharARalphRef = useRef<THREE.Mesh>(null!);
+  const audioCharAOliRef = useRef<THREE.Mesh>(null!);
+  const audioCharAJoelRef = useRef<THREE.Mesh>(null!);
+
   const [myPresence, updateMyPresence] = useMyPresence();
   const liveCharPos = useStorage((root) => root);
 
@@ -228,9 +233,9 @@ const Objects = () => {
         <AudioSrc
           ref={audioObj2FocusRef}
           radius={1}
-          position={[-5.3, 0.13, 0]}
+          position={[-4.3, 0.13, 0]}
         />
-        <AudioSrc ref={audioObj2Ref} radius={4} position={[-4.3, 0.1, 1]} />
+        <AudioSrc ref={audioObj2Ref} radius={4} position={[-3.3, 0.1, 1]} />
 
         {/* underwater */}
         <AudioSrc ref={audioObj3FocusRef} radius={4} position={[3, 0.13, -1]} />
@@ -258,6 +263,27 @@ const Objects = () => {
           character="joel"
           position={[liveCharPos.joel.x, 1.5, liveCharPos.joel.y]}
         />
+
+        <AudioSrc
+          ref={audioCharASiahRef}
+          character="asiah"
+          position={[liveCharPos.asiah.x, 1.5, liveCharPos.asiah.y]}
+        />
+        <AudioSrc
+          ref={audioCharARalphRef}
+          character="aralph"
+          position={[liveCharPos.aralph.x, 1.5, liveCharPos.aralph.y]}
+        />
+        <AudioSrc
+          ref={audioCharAOliRef}
+          character="aoli"
+          position={[liveCharPos.aoli.x, 1.5, liveCharPos.aoli.y]}
+        />
+        <AudioSrc
+          ref={audioCharAJoelRef}
+          character="ajoel"
+          position={[liveCharPos.ajoel.x, 1.5, liveCharPos.ajoel.y]}
+        />
       </group>
 
       <Html fullscreen>
@@ -271,6 +297,11 @@ const Objects = () => {
             justifyContent: "space-between",
           }}
         >
+          <div style={{ color: "#888" }}>
+            c: {myPresence.character}
+            <br />
+            v1.2
+          </div>
           <div>
             <button
               style={{ height: "40px", width: "80px" }}
@@ -320,6 +351,28 @@ const Objects = () => {
                       audio: "/land-sound/underwater.mp3",
                     },
 
+                    //people
+
+                    {
+                      object: audioCharAOliRef.current,
+                      audio: "/land-sound/parktones-2.mp3",
+                      radius: 2,
+                    },
+                    {
+                      object: audioCharAJoelRef.current,
+                      audio: "/land-sound/parktones-5.mp3",
+                      radius: 2,
+                    },
+                    {
+                      object: audioCharASiahRef.current,
+                      audio: "/land-sound/parktones-6.mp3",
+                      radius: 2,
+                    },
+                    {
+                      object: audioCharARalphRef.current,
+                      audio: "/energy.mp3",
+                      radius: 2,
+                    },
                     {
                       object: audioCharOliRef.current,
                       audio: "/land-sound/parktones-2.mp3",
@@ -365,11 +418,7 @@ const Objects = () => {
 						</div>
 
 						*/}
-          <div>
-            I am {myPresence.character}
-            <br />
-            v1.2
-          </div>
+
           <div>
             {myPresence.position?.x.toFixed(2)}
             <br />
@@ -404,10 +453,34 @@ const Objects = () => {
               <button
                 style={{ fontSize: "1.5em" }}
                 onClick={() => {
-                  updateMyPresence({ character: "ralph" });
+                  updateMyPresence({ character: "ajoel" });
                 }}
               >
-                Ralph
+                Sarah
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "aoli" });
+                }}
+              >
+                Karah
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "asiah" });
+                }}
+              >
+                Jo
+              </button>
+              <button
+                style={{ fontSize: "1.5em" }}
+                onClick={() => {
+                  updateMyPresence({ character: "aralph" });
+                }}
+              >
+                Stella
               </button>
               <button
                 style={{ fontSize: "1.5em" }}
@@ -415,31 +488,7 @@ const Objects = () => {
                   updateMyPresence({ character: "ralph" });
                 }}
               >
-                Ralph
-              </button>
-              <button
-                style={{ fontSize: "1.5em" }}
-                onClick={() => {
-                  updateMyPresence({ character: "ralph" });
-                }}
-              >
-                Ralph
-              </button>
-              <button
-                style={{ fontSize: "1.5em" }}
-                onClick={() => {
-                  updateMyPresence({ character: "ralph" });
-                }}
-              >
-                Ralph
-              </button>
-              <button
-                style={{ fontSize: "1.5em" }}
-                onClick={() => {
-                  updateMyPresence({ character: "ralph" });
-                }}
-              >
-                Ralph
+                Auriga
               </button>
               <button
                 style={{ fontSize: "1.5em" }}
@@ -455,7 +504,7 @@ const Objects = () => {
                   updateMyPresence({ character: "siah" });
                 }}
               >
-                Siah
+                Ian
               </button>
               <button
                 style={{ fontSize: "1.5em" }}

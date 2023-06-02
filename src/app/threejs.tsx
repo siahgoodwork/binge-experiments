@@ -36,7 +36,7 @@ export const ThreeScene = () => {
 
     const leftTrack =
       listener === 0
-        ? "/headtrack/woman-b.m4a"
+        ? "/headtrack/woman-b.mp3"
         : listener === 1
         ? "/headtrack/woman-a.m4a"
         : "/headtrack/man-a.m4a";
@@ -46,7 +46,7 @@ export const ThreeScene = () => {
         ? "/headtrack/woman-a.m4a"
         : listener === 1
         ? "/headtrack/man-a.m4a"
-        : "/headtrack/woman-b.m4a";
+        : "/headtrack/woman-b.mp3";
 
     req1.open("GET", leftTrack, true);
     req2.open("GET", rightTrack, true);

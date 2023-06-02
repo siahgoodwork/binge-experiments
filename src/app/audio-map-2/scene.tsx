@@ -394,7 +394,7 @@ const Objects = () => {
                     },
                     {
                       object: audioCharJoelRef.current,
-                      audio: "/energy.mp3",
+                      audio: "/land-sound/parktones-3.mp3",
                       radius: 2,
                     },
                     {
